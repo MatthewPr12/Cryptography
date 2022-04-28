@@ -18,10 +18,10 @@ class Client:
             return
 
         # create key pairs
-        n, e, d = rsa.create_keys(101, 103)
+        n, e, d = rsa.create_keys()
         self.public = (e, n)
         self.secret = (d, n)
-        info = self.username + " " + str(self.public)
+        info = self.username + str(self.public)
         print(f"SENDING {info} TO SERVER")
         # print(f"ENCODED {info.encode()}")
         # print(f"DECODED {info.encode().decode()}")
@@ -43,7 +43,9 @@ class Client:
             message = self.s.recv(1024).decode()
 
             # decrypt message with the secrete key
-            decrypted = rsa.decrypt(self.secret, message)
+            print(f"[CLIENT] received {message}")
+            decrypted = rsa.decrypt(message, self.secret)
+            print(f"[CLIENT] decrypted")
             # ...
 
             print(decrypted)
@@ -54,7 +56,7 @@ class Client:
 
             # encrypt message with the secrete key
             # ...
-
+            print(f"[CLIENT] SENDING {message}")
             self.s.send(message.encode())
 
 

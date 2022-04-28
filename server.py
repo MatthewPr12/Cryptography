@@ -1,7 +1,6 @@
 import re
 import socket
 import threading
-
 import rsa
 
 
@@ -47,22 +46,22 @@ class Server:
 
     def broadcast(self, msg: str):
         for client in self.clients:
-            # encrypt the message
             en = self.username_lookup[client][-1]
-            encrypted = rsa.encrypt(en, msg)
-            # ...
+            encrypted = rsa.encrypt(msg, en)
 
             client.send(str(encrypted).encode())
+            # client.send(msg.encode())
 
     def handle_client(self, c: socket, addr):
         while True:
-            msg = c.recv(1024)
+            msg = c.recv(1024).decode()
 
             for client in self.clients:
                 if client != c:
-                    en = self.username_lookup[client][-1]
-                    encrypted = rsa.encrypt(en, msg)
-                    client.send(encrypted)
+                    en = self.username_lookup[client][-1] #########
+                    encrypted = rsa.encrypt(msg, en)
+                    print(f"[SERVER] sending {encrypted}")
+                    client.send(encrypted.encode())
 
 
 if __name__ == "__main__":
