@@ -41,7 +41,7 @@ def create_keys(p1, p2):
 
 
 def encrypt(message, n, e):
-    message, blocks = message.lower(), []
+    blocks = []
 
     for i in range(len(message)):
         number = ord(message[i])
