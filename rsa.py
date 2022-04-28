@@ -40,23 +40,23 @@ def create_keys(p1, p2):
     return n, e, d
 
 
-def encrypt(message, n, e, counter):
+def encrypt(message, n, e):
     message, blocks = message.lower(), []
 
     for i in range(len(message)):
-        number = ord(message[i]) - counter  # number in alphabet
-        number = (number ** e) % n  # encoded
+        number = ord(message[i])
+        number = (number ** e) % n
         blocks.append(str(number))
     return " ".join(blocks)
 
 
-def decrypt(blocks, d, n, counter):
+def decrypt(blocks, d, n):
     blocks = blocks.split(' ')
     message = ""
 
     for number in blocks:
         letter_index = ((int(number)) ** d) % n
-        letter = chr(letter_index + counter)
+        letter = chr(letter_index)
 
         message += letter
     return message
@@ -70,17 +70,13 @@ def main():
     print(n, e, d)
 
     m = "тест"
-    if ord(m[0]) < 130:
-        counter = 97
-    else:
-        counter = 1072
     sha256_digest_1 = sha256(m.encode("utf-8"))
     digest_1 = sha256_digest_1.digest()
     hexdigest_1 = sha256_digest_1.hexdigest()
 
-    encrypted = encrypt(m, n, e, counter)
+    encrypted = encrypt(m, n, e)
     print(encrypted)
-    decrypted = decrypt(encrypted, d, n, counter)
+    decrypted = decrypt(encrypted, d, n)
     print(decrypted)
 
     sha256_digest_2 = sha256(decrypted.encode("utf-8"))
