@@ -47,7 +47,7 @@ class Client:
         while True:
             message = input()
 
-            print(f"[CLIENT] SENDING {message}")
+            # print(f"[CLIENT] SENDING {message}")
             self.s.send(message.encode())
 
 

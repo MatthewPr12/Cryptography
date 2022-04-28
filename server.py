@@ -22,7 +22,7 @@ class Server:
             client_info = c.recv(2048).decode()
             username, client_public = client_info.split("(")
             client_public = tuple(map(lambda x: int(x), re.findall(r"(\d+)", client_public)))
-            print(f"RECEIVED {client_info}")
+            # print(f"RECEIVED {client_info}")
             print(f"{username} tries to connect")
             self.broadcast(f'{username} joined')
             self.username_lookup[c] = [username, client_public]
