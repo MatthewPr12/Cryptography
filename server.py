@@ -1,5 +1,8 @@
+import re
 import socket
 import threading
+
+import rsa
 
 
 class Server:
@@ -19,10 +22,13 @@ class Server:
 
         while True:
             c, addr = self.s.accept()
-            username = c.recv(1024).decode()
+            client_info = c.recv(2048).decode()
+            username, client_public = client_info.split("(")
+            client_public = tuple(map(lambda x: int(x), re.findall(r"(\d+)", client_public)))
+            print(f"RECEIVED {client_info}")
             print(f"{username} tries to connect")
             self.broadcast(f'new person has joined: {username}')
-            self.username_lookup[c] = username
+            self.username_lookup[c] = [username, client_public]
             self.clients.append(c)
 
             # send public key to the client
@@ -42,10 +48,11 @@ class Server:
     def broadcast(self, msg: str):
         for client in self.clients:
             # encrypt the message
-
+            en = self.username_lookup[client][-1]
+            encrypted = rsa.encrypt(en, msg)
             # ...
 
-            client.send(msg.encode())
+            client.send(str(encrypted).encode())
 
     def handle_client(self, c: socket, addr):
         while True:
@@ -53,7 +60,9 @@ class Server:
 
             for client in self.clients:
                 if client != c:
-                    client.send(msg)
+                    en = self.username_lookup[client][-1]
+                    encrypted = rsa.encrypt(en, msg)
+                    client.send(encrypted)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 import socket
 import threading
+import rsa
 
 
 class Client:
@@ -16,13 +17,19 @@ class Client:
             print("[client]: could not connect to server: ", e)
             return
 
-        self.s.send(self.username.encode())
-
         # create key pairs
+        self.public, self.secret = rsa.generate_keypairs(13, 17)
+        info = self.username + " " + str(self.public)
+        print(f"SENDING {info} TO SERVER")
+        # print(f"ENCODED {info.encode()}")
+        # print(f"DECODED {info.encode().decode()}")
+        self.s.send(info.encode())
 
         # exchange public keys
+        # self.s.send(str(self.public).encode())
 
         # receive the encrypted secret key
+        # others_public = self.s.recv(2048).decode()
 
         message_handler = threading.Thread(target=self.read_handler, args=())
         message_handler.start()
@@ -34,22 +41,21 @@ class Client:
             message = self.s.recv(1024).decode()
 
             # decrypt message with the secrete key
-
+            decrypted = rsa.decrypt(self.secret, message)
             # ...
 
-            print(message)
+            print(decrypted)
 
     def write_handler(self):
         while True:
             message = input()
 
             # encrypt message with the secrete key
-
             # ...
 
             self.s.send(message.encode())
 
 
 if __name__ == "__main__":
-    cl = Client("127.0.0.1", 9001, "b_g")
+    cl = Client("127.0.0.1", 9001, "user")
     cl.init_connection()
