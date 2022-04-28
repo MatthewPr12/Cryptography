@@ -5,7 +5,7 @@ from primes import primes
 
 
 def gcd(a, b):
-    if (b == 0):
+    if b == 0:
         return a
     else:
         return gcd(b, a % b)
@@ -13,7 +13,7 @@ def gcd(a, b):
 
 def extended_gcd(e, fi):
     x, x1, y, y1 = 0, 1, 1, 0
-    while (fi != 0):
+    while fi != 0:
         coeff = e // fi
         e, fi = fi, e - coeff * fi
         x1, x = x, x1 - coeff * x
