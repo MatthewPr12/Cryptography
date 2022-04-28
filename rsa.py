@@ -31,6 +31,8 @@ def create_e(fi):
 def create_keys():
     p1 = primes[random.randint(2, 10)]
     p2 = primes[random.randint(2, 10)]
+    while p2 == p1:
+        p2 = primes[random.randint(2, 10)]
     n = p1 * p2
     fi = (p1 - 1) * (p2 - 1)
     e = create_e(fi)
