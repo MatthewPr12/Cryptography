@@ -18,7 +18,9 @@ class Client:
             return
 
         # create key pairs
-        self.public, self.secret = rsa.generate_keypairs(13, 17)
+        n, e, d = rsa.create_keys(101, 103)
+        self.public = (e, n)
+        self.secret = (d, n)
         info = self.username + " " + str(self.public)
         print(f"SENDING {info} TO SERVER")
         # print(f"ENCODED {info.encode()}")
