@@ -28,9 +28,9 @@ def create_e(fi):
             return e
 
 
-def create_keys(p1, p2):
-    p1 = primes[random.randint(150, 350)]
-    p2 = primes[random.randint(150, 350)]
+def create_keys():
+    p1 = primes[random.randint(2, 10)]
+    p2 = primes[random.randint(2, 10)]
     n = p1 * p2
     fi = (p1 - 1) * (p2 - 1)
     e = create_e(fi)
@@ -40,8 +40,9 @@ def create_keys(p1, p2):
     return n, e, d
 
 
-def encrypt(message, n, e):
-    message, blocks = message.lower(), []
+def encrypt(message, en):
+    e, n = en
+    message, blocks = message, []
 
     for i in range(len(message)):
         number = ord(message[i])
@@ -50,7 +51,8 @@ def encrypt(message, n, e):
     return " ".join(blocks)
 
 
-def decrypt(blocks, d, n):
+def decrypt(blocks, dn):
+    d, n = dn
     blocks = blocks.split(' ')
     message = ""
 
@@ -64,20 +66,19 @@ def decrypt(blocks, d, n):
 
 def main():
     """check with hashing"""
-    p1, p2 = 123, 127  # change to random choice among primes or input
 
-    n, e, d = create_keys(p1, p2)
+    n, e, d = create_keys()
     print(n, e, d)
 
-    m = "тест"
+    m = "hi"
     sha256_digest_1 = sha256(m.encode("utf-8"))
     digest_1 = sha256_digest_1.digest()
     hexdigest_1 = sha256_digest_1.hexdigest()
 
-    encrypted = encrypt(m, n, e)
-    print(encrypted)
-    decrypted = decrypt(encrypted, d, n)
-    print(decrypted)
+    encrypted = encrypt(m, (n, e))
+    print("ENCRYPTED:", encrypted)
+    decrypted = decrypt(encrypted, (d, n))
+    print("DECRYPTED:", decrypted)
 
     sha256_digest_2 = sha256(decrypted.encode("utf-8"))
     digest_2 = sha256_digest_2.digest()
@@ -86,4 +87,5 @@ def main():
     print(compare_digest(hexdigest_1, hexdigest_2))
 
 
-main()
+if __name__ == "__main__":
+    main()
