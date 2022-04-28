@@ -22,16 +22,10 @@ class Client:
         self.public = (e, n)
         self.secret = (d, n)
         info = self.username + str(self.public)
-        print(f"SENDING {info} TO SERVER")
+        # print(f"SENDING {info} TO SERVER")
         # print(f"ENCODED {info.encode()}")
         # print(f"DECODED {info.encode().decode()}")
         self.s.send(info.encode())
-
-        # exchange public keys
-        # self.s.send(str(self.public).encode())
-
-        # receive the encrypted secret key
-        # others_public = self.s.recv(2048).decode()
 
         message_handler = threading.Thread(target=self.read_handler, args=())
         message_handler.start()
@@ -43,10 +37,9 @@ class Client:
             message = self.s.recv(1024).decode()
 
             # decrypt message with the secrete key
-            print(f"[CLIENT] received {message}")
+            # print(f"[CLIENT] received {message}")
             decrypted = rsa.decrypt(message, self.secret)
-            print(f"[CLIENT] decrypted")
-            # ...
+            # print(f"[CLIENT] decrypted")
 
             print(decrypted)
 
@@ -54,8 +47,6 @@ class Client:
         while True:
             message = input()
 
-            # encrypt message with the secrete key
-            # ...
             print(f"[CLIENT] SENDING {message}")
             self.s.send(message.encode())
 

@@ -17,8 +17,6 @@ class Server:
         self.s.bind((self.host, self.port))
         self.s.listen(100)
 
-        # generate keys ...
-
         while True:
             c, addr = self.s.accept()
             client_info = c.recv(2048).decode()
@@ -26,21 +24,9 @@ class Server:
             client_public = tuple(map(lambda x: int(x), re.findall(r"(\d+)", client_public)))
             print(f"RECEIVED {client_info}")
             print(f"{username} tries to connect")
-            self.broadcast(f'new person has joined: {username}')
+            self.broadcast(f'{username} joined')
             self.username_lookup[c] = [username, client_public]
             self.clients.append(c)
-
-            # send public key to the client
-
-            # ...
-
-            # encrypt the secret with the clients public key
-
-            # ...
-
-            # send the encrypted secret to a client
-
-            # ...
 
             threading.Thread(target=self.handle_client, args=(c, addr,)).start()
 
@@ -58,9 +44,9 @@ class Server:
 
             for client in self.clients:
                 if client != c:
-                    en = self.username_lookup[client][-1] #########
+                    en = self.username_lookup[client][-1]
                     encrypted = rsa.encrypt(msg, en)
-                    print(f"[SERVER] sending {encrypted}")
+                    # print(f"[SERVER] sending {encrypted}")
                     client.send(encrypted.encode())
 
 
