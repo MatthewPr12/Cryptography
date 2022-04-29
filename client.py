@@ -27,7 +27,7 @@ class Client:
         # print(f"ENCODED {info.encode()}")
         # print(f"DECODED {info.encode().decode()}")
         server_public = self.s.recv(2048).decode()
-        print(f"SERVER's PUBLIC KEYS {server_public}")
+        # print(f"SERVER's PUBLIC KEYS {server_public}")
         server_public = tuple(map(lambda x: int(x), re.findall(r"(\d+)", server_public)))
         self.s.send(info.encode())
 
@@ -54,7 +54,7 @@ class Client:
 
             # print(f"[CLIENT] SENDING {message}")
             encrypted = rsa.encrypt(message, server_public)
-            print(f"[CLIENT] sending encrypted to server {encrypted}")
+            # print(f"[CLIENT] sending encrypted to server {encrypted}")
             self.s.send(encrypted.encode())
 
 
