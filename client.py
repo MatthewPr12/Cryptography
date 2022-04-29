@@ -1,4 +1,5 @@
 import socket
+import re
 import threading
 import rsa
 
@@ -25,11 +26,14 @@ class Client:
         # print(f"SENDING {info} TO SERVER")
         # print(f"ENCODED {info.encode()}")
         # print(f"DECODED {info.encode().decode()}")
+        server_public = self.s.recv(2048).decode()
+        print(f"SERVER's PUBLIC KEYS {server_public}")
+        server_public = tuple(map(lambda x: int(x), re.findall(r"(\d+)", server_public)))
         self.s.send(info.encode())
 
         message_handler = threading.Thread(target=self.read_handler, args=())
         message_handler.start()
-        input_handler = threading.Thread(target=self.write_handler, args=())
+        input_handler = threading.Thread(target=self.write_handler, args=server_public)
         input_handler.start()
 
     def read_handler(self):
@@ -43,12 +47,14 @@ class Client:
 
             print(decrypted)
 
-    def write_handler(self):
+    def write_handler(self, e, n):
+        server_public = (e, n)
         while True:
             message = input()
 
             # print(f"[CLIENT] SENDING {message}")
-            self.s.send(message.encode())
+            encrypted = rsa.encrypt(message, server_public)
+            self.s.send(encrypted.encode())
 
 
 if __name__ == "__main__":

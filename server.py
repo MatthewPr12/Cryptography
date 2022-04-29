@@ -16,9 +16,16 @@ class Server:
     def start(self):
         self.s.bind((self.host, self.port))
         self.s.listen(100)
+        # initialize the pair of keys for server
+        n, e, d = rsa.create_keys()
+        self.public = (e, n)
+        self.private = (d, n)
 
         while True:
             c, addr = self.s.accept()
+            # send server's public key to the client
+            c.send((str(self.public).encode()))
+
             client_info = c.recv(2048).decode()
             username, client_public = client_info.split("(")
             client_public = tuple(map(lambda x: int(x), re.findall(r"(\d+)", client_public)))
@@ -40,7 +47,8 @@ class Server:
 
     def handle_client(self, c: socket, addr):
         while True:
-            msg = c.recv(1024).decode()
+            encrypted = c.recv(1024).decode()
+            msg = rsa.decrypt(encrypted, self.private)
 
             for client in self.clients:
                 if client != c:
