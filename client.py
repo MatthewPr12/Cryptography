@@ -54,6 +54,7 @@ class Client:
 
             # print(f"[CLIENT] SENDING {message}")
             encrypted = rsa.encrypt(message, server_public)
+            print(f"[CLIENT] sending encrypted to server {encrypted}")
             self.s.send(encrypted.encode())
 
 
